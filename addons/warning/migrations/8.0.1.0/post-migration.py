@@ -20,12 +20,22 @@
 ##############################################################################
 
 from openerp.openupgrade import openupgrade
-from openerp import pooler
+from openerp.modules.registry import RegistryManager
+
+
+def update_product_warn_fields(cr, pool):
+    for warn_field in ('purchase_line_warn', 'sale_line_warn'):
+        openupgrade.logged_query(cr, """
+            UPDATE product_product
+            SET %(field)s='no-message'
+            WHERE %(field)s is null
+        """ % {'field': warn_field})
 
 
 @openupgrade.migrate()
 def migrate(cr, version):
-    pool = pooler.get_pool(cr.dbname)
+    pool = RegistryManager.get(cr.dbname)
+    update_product_warn_fields(cr, pool)
     openupgrade.move_field_m2o(
         cr, pool,
         'product.product', 'purchase_line_warn', 'product_tmpl_id',

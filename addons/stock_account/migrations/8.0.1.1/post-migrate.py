@@ -113,5 +113,5 @@ def migrate(cr, version):
         return
     pool = pooler.get_pool(cr.dbname)
     inventory_period_id(cr, pool)
-    create_properties(cr, pool)
+    #create_properties(cr, pool)
     propagate_invoice_state(cr)
